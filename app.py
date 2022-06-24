@@ -2,24 +2,13 @@ import telebot
 import requests
 import jsons
 
+
+class ConvertException(Exception):
+    pass
+
+
 TOKEN = '5443961552:AAGG8XQrZdWXL24QOAeJLX79zLE1tXYUE_w'
 bot = telebot.TeleBot(TOKEN)
-
-# money = {'евро': 'EUR',
-#          'EUR': 'EUR',
-#          'доллар': 'USD',
-#          'доллары': 'USD',
-#          'долларов': 'USD',
-#          'USD': 'USD',
-#          'российский рубль': 'RUB',
-#          'российских рублей': 'RUB',
-#          'российских рубля': 'RUB',
-#          'RUB': 'RUB',
-#          'белорусский рубль': 'BYN',
-#          'белорусских рублей': 'BYN',
-#          'белорусских рубля': 'BYN',
-#          'BYN': 'BYN',
-#          }
 
 money = {"Австралийский_доллар": "AUD",
          "Армянский_драм": "AMD",
@@ -49,11 +38,19 @@ money = {"Австралийский_доллар": "AUD",
          "Шведская_крона": "SEK",
          "Швейцарский_франк": "CHF"
          }
+
 money_abbreviation = {"AUD": "AUD", "AMD": "AMD", "BGN": "BGN", "UAH": "UAH", "DKK": "DKK", "USD": "USD", "EUR": "EUR",
                       "PLN": "PLN", "JPY": "JPY", "IRR": "IRR", "ISK": "ISK", "CAD": "CAD", "CNY": "CNY", "KWD": "KWD",
                       "MDL": "MDL", "NZD": "NZD", "NOK": "NOK", "RUB": "RUB", "SGD": "SGD", "KGS": "KGS", "KZT": "KZT",
                       "TRY": "TRY", "GBP": "GBP", "CZK": "CZK", "SEK": "SEK", "CHF": "CHF", "BYN": "BYN"
                       }
+
+
+def get_key_money(d, value):
+    for k, v in d.items():
+        if v == value:
+            return k
+
 
 @bot.message_handler(commands=['start', 'help'])
 def send__start_help(message):
@@ -78,7 +75,7 @@ def byn_courses(message):
     texts = jsons.loads(r.content)
 
     tx = texts[0]
-    text_answer = f'Актуальные курс белорусского рубля к иностранным валютам на {tx["Date"]}'
+    text_answer = f'Актуальный курс белорусского рубля к иностранным валютам на {tx["Date"]}'
     text_answer = text_answer[:70] + ':\n'
     m = ''
 
@@ -93,11 +90,23 @@ def byn_courses(message):
 
 @bot.message_handler(content_types=['text'])
 def exchange(message: telebot.types.Message):
-    base, qoute, amount = message.text.split(' ')
-    print(qoute, base, amount)
+    str_command = message.text.split(' ')
+    if len(str_command) < 3:
+        raise ConvertException('Ошибка запроса! Вы указали недостаточно параметров. Правильно: <название_валюты1> <название_валюты2> <количество_первой_валюты>')
+
+    if len(str_command) > 3:
+        raise ConvertException('Ошибка запроса! Вы указали лишние параметры. Правильно: <название_валюты1> <название_валюты2> <количество_первой_валюты>')
+
+    base, qoute, amount = str_command
+
+    if base == qoute:
+        raise ConvertException('Ошибка запроса! Вы указали одинаковые валюты. Правильно: <название_валюты1> <название_валюты2> <количество_первой_валюты>')
+
+    # if not(amount.isdigit() or )
+
     base = money.get(base) if base in money.keys() else money_abbreviation.get(base)
     qoute = money.get(qoute) if qoute in money.keys() else money_abbreviation.get(qoute)
-    print(qoute, base, amount)
+
     url = f"https://api.apilayer.com/exchangerates_data/convert?to={qoute}&from={base}&amount={amount}"
 
     payload = {}
@@ -106,7 +115,10 @@ def exchange(message: telebot.types.Message):
     response = requests.request("GET", url, headers=headers, data=payload)
     # result = response.text
     result = jsons.loads(response.content)
-    text_answer = f'{result["query"]} --> {result["result"]}'
+    text_answer = f'{(float(amount)):.2f} {get_key_money(money, base)} {base} стоят {float(result["result"]):.2f} {get_key_money(money, qoute)} {qoute}'
+
+    # text_answer = f'{result["query"]} --> {result["result"]}'
+
     print(type(result))
     print(result)
 
