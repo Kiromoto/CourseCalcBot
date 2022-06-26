@@ -52,8 +52,7 @@ def input_validation(amount, base, quote):
     input_ok = True
     try:
         amount_fl = float(amount)
-    except KeyError:
-        input_ok = False
+    except:
         raise ConvertException('Количество валюты должно быть указано числом.\nПример запроса: "100 USD BYN"')
 
     if float(amount) <= 0:
@@ -64,7 +63,7 @@ def input_validation(amount, base, quote):
         base = money.get(base)
     elif base not in money_abbreviation:
         input_ok = False
-        raise ConvertException(f'Для валюты {base} расчет не возможен!')
+        raise ConvertException(f'Для валюты {base} расчет невозможен!')
 
     if quote in money:
         quote = money.get(quote)
