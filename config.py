@@ -1,6 +1,4 @@
-TOKEN = '5443961552:AAGG8XQrZdWXL24QOAeJLX79zLE1tXYUE_w'
-
-money = {"Австралийский_доллар": "AUD",
+MONEY = {"Австралийский_доллар": "AUD",
          "Армянский_драм": "AMD",
          "Болгарский_лев": "BGN",
          "Белорусский_рубль": "BYN",
@@ -29,7 +27,7 @@ money = {"Австралийский_доллар": "AUD",
          "Швейцарский_франк": "CHF"
          }
 
-money_abbreviation = {"AUD": "AUD", "AMD": "AMD", "BGN": "BGN", "UAH": "UAH", "DKK": "DKK", "USD": "USD", "EUR": "EUR",
+MONEY_ABBREVIATION = {"AUD": "AUD", "AMD": "AMD", "BGN": "BGN", "UAH": "UAH", "DKK": "DKK", "USD": "USD", "EUR": "EUR",
                       "PLN": "PLN", "JPY": "JPY", "IRR": "IRR", "ISK": "ISK", "CAD": "CAD", "CNY": "CNY", "KWD": "KWD",
                       "MDL": "MDL", "NZD": "NZD", "NOK": "NOK", "RUB": "RUB", "SGD": "SGD", "KGS": "KGS", "KZT": "KZT",
                       "TRY": "TRY", "GBP": "GBP", "CZK": "CZK", "SEK": "SEK", "CHF": "CHF", "BYN": "BYN"}

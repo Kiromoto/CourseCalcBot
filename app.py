@@ -1,10 +1,19 @@
 import telebot
 import requests
 import jsons
-from config import TOKEN, money
+from config import MONEY
 from extensions import ConvertException, Exchangers
 
-bot = telebot.TeleBot(TOKEN)
+from dotenv import load_dotenv
+import os
+from pathlib import Path
+
+
+load_dotenv()
+env_path = Path('.')/'.env'
+load_dotenv(dotenv_path=env_path)
+
+bot = telebot.TeleBot(os.getenv('TOKEN'))
 
 
 @bot.message_handler(commands=['start', 'help'])
@@ -20,8 +29,8 @@ def send__start_help(message):
 @bot.message_handler(commands=['values'])
 def send_start_help(message):
     text_answer = '''Доступны к расчету курса следующие валюты:\n'''
-    for key in money.keys():
-        text_answer += f'{key} - {money.get(key)}\n'
+    for key in MONEY.keys():
+        text_answer += f'{key} - {MONEY.get(key)}\n'
     bot.reply_to(message, text_answer[:-1])
 
 

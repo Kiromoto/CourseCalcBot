@@ -1,6 +1,6 @@
 import requests
 import jsons
-from config import money, money_abbreviation
+from config import MONEY, MONEY_ABBREVIATION
 
 
 class ConvertException(Exception):
@@ -16,10 +16,10 @@ class Exchangers:
             for tx in texts:
                 if tx["Cur_Abbreviation"] == base:
                     sum = (float(amount)) / tx["Cur_Scale"] * tx["Cur_OfficialRate"]
-                    text_answer = f'{(float(amount)):.2f} {get_key_money(money, base)} {base} ==> {sum:.2f} {get_key_money(money, quote)} {quote}'
+                    text_answer = f'{(float(amount)):.2f} {get_key_money(MONEY, base)} {base} ==> {sum:.2f} {get_key_money(MONEY, quote)} {quote}'
                 elif tx["Cur_Abbreviation"] == quote:
                     sum = (float(amount)) / tx["Cur_OfficialRate"] * tx["Cur_Scale"]
-                    text_answer = f'{(float(amount)):.2f} {get_key_money(money, base)} {base} ==> {sum:.2f} {get_key_money(money, quote)} {quote}'
+                    text_answer = f'{(float(amount)):.2f} {get_key_money(MONEY, base)} {base} ==> {sum:.2f} {get_key_money(MONEY, quote)} {quote}'
 
         else:
             text_answer = 'Что-то пошло не так!'
@@ -34,7 +34,7 @@ class Exchangers:
             headers = {"apikey": "EMH1WNGM1H5SS5pMdM8JPPsuthqIbEUB"}
             response = requests.request("GET", url, headers=headers, data=payload)
             result = jsons.loads(response.content)
-            text_answer = f'{(float(amount)):.2f} {get_key_money(money, base)} {base} ==> {float(result["result"]):.2f} {get_key_money(money, quote)} {quote}'
+            text_answer = f'{(float(amount)):.2f} {get_key_money(MONEY, base)} {base} ==> {float(result["result"]):.2f} {get_key_money(MONEY, quote)} {quote}'
         else:
             text_answer = 'Что-то пошло не так!'
 
@@ -59,15 +59,15 @@ def input_validation(amount, base, quote):
         input_ok = False
         raise ConvertException('Количество валюты должно быть положительным числом.\nПример запроса: "100 USD BYN"')
 
-    if base in money:
-        base = money.get(base)
-    elif base not in money_abbreviation:
+    if base in MONEY:
+        base = MONEY.get(base)
+    elif base not in MONEY_ABBREVIATION:
         input_ok = False
         raise ConvertException(f'Для валюты {base} расчет невозможен!')
 
-    if quote in money:
-        quote = money.get(quote)
-    elif quote not in money_abbreviation:
+    if quote in MONEY:
+        quote = MONEY.get(quote)
+    elif quote not in MONEY_ABBREVIATION:
         input_ok = False
         raise ConvertException(f'Для валюты {quote} расчет не возможен!')
 
